@@ -25,6 +25,11 @@ jobs:
           mkdir appsrc
           unzip "$(find . -maxdepth 1 -name '*.zip' | head -n 1)" -d appsrc
 
+      - name: Fix Java Kotlin versions
+        run: |
+          FILE="appsrc/RideProfitAssistant/app/build.gradle.kts"
+          python3 -c "p='$FILE'; s=open(p).read(); s=s.replace('    defaultConfig {', '    compileOptions {\\n        sourceCompatibility = JavaVersion.VERSION_17\\n        targetCompatibility = JavaVersion.VERSION_17\\n    }\\n    kotlinOptions {\\n        jvmTarget = \"17\"\\n    }\\n    defaultConfig {'); open(p,'w').write(s)"
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -38,4 +43,3 @@ jobs:
         with:
           name: Ride-Profit-Assistant-APK
           path: appsrc/RideProfitAssistant/app/build/outputs/apk/debug/app-debug.apk
-          
